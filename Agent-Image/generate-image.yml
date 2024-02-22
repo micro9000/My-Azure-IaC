@@ -32,6 +32,7 @@ jobs:
             ls -la
 
       - script: |
+          packer init
           packer build -var "subscription_id=$(SubscriptionId)" \
              -var "client_id=$(ClientId)" \
              -var "client_secret=$(ClientSecret)" \
