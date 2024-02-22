@@ -17,7 +17,7 @@ jobs:
   - job: CloneRunnerImage
     displayName: Clone GitHub Runner Image Repo
     steps:
-      - checkout: https://github.com/actions/runner-images.git
+      - checkout: git://github.com/actions/runner-images.git
         displayName: "Clone runner images repo"
 
       - task: Bash@3
