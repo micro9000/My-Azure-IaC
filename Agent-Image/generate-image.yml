@@ -1,3 +1,4 @@
+# This is build in https://dev.azure.com/RichCorner/DevOpsInfrastructures/
 trigger:
   - main
 
@@ -31,6 +32,11 @@ jobs:
             printenv
             ls -la
       
+      - script: |
+          az group create --name $(ImageResourceGroupName) --location eastasia
+        displayName: 'Create Resource Group'
+        failOnStderr: false
+
       - script: |
           packer init -upgrade images/ubuntu/templates/ubuntu-22.04.pkr.hcl
         displayName: 'Initialize packer'
