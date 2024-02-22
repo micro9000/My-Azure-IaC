@@ -13,6 +13,8 @@ variables:
     value: 'ubuntu-22.04'
   - name: ImageResourceGroupName
     value: 'My-DevOps-Agent-OS-Images-RG'
+  - name: AppRegistrationName
+    value: 'Temporary-Client-To-Build-Image'
 
 jobs:
   - job: CloneRunnerImage
@@ -33,6 +35,24 @@ jobs:
             ls -la
       
       - script: |
+          clientid=$(az ad app create --display-name $(AppRegistrationName) --query appId --output tsv)
+
+          ###Remove api permissions: disable default exposed scope first
+          default_scope=$(az ad app show --id $clientid | jq '.oauth2Permissions[0].isEnabled = false' | jq -r '.oauth2Permissions')
+          az ad app update --id $clientid --set oauth2Permissions="$default_scope"
+          az ad app update --id $clientid --set oauth2Permissions="[]"
+
+          clientsecretname=mycert2
+          clientsecretduration=2
+          clientsecret=$(az ad app credential reset --id $clientid --append --display-name $clientsecretname --months $clientsecretduration --query password --output tsv)
+          
+          echo "##vso[task.setvariable variable=myTemporaryClientId;issecret=true]$clientid"
+          echo "##vso[task.setvariable variable=myTemporaryClientSecret;issecret=true]$clientsecret"
+        displayName: 'Create Temporary App Registration'
+        failOnStderr: false
+
+      - script: |
+          az login --service-principal -u $(myTemporaryClientId) -p $(myTemporaryClientSecret) --tenant $(TenantId)
           az group create --name $(ImageResourceGroupName) --location eastasia
         displayName: 'Create Resource Group'
         failOnStderr: false
@@ -45,8 +65,8 @@ jobs:
 
       - script: |
           packer build -var "subscription_id=$(SubscriptionId)" \
-             -var "client_id=$(ClientId)" \
-             -var "client_secret=$(ClientSecret)" \
+             -var "client_id=$(myTemporaryClientId)" \
+             -var "client_secret=$(myTemporaryClientSecret)" \
              -var "location=$(location)" \
              -var "managed_image_name=$(ImageName)" \
              -var "managed_image_resource_group_name=$(ImageResourceGroupName)" \
@@ -55,3 +75,9 @@ jobs:
         displayName: 'Build image'
         failOnStderr: false
         workingDirectory: '$(Pipeline.Workspace)/runner-images'
+
+      - script: |
+          az ad app delete --id $(myTemporaryClientId)
+          az logout
+        displayName: 'Create Resource Group'
+        failOnStderr: false
