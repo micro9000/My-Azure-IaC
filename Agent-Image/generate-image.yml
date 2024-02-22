@@ -32,10 +32,10 @@ jobs:
             ls -la
       
       - script: |
-          packer init -upgrade
+          packer init -upgrade images/ubuntu/templates/ubuntu-22.04.pkr.hcl
         displayName: 'Initialize packer'
         failOnStderr: false
-        workingDirectory: '$(Pipeline.Workspace)/runner-images/images/ubuntu/templates/ubuntu-22.04.pkr.hcl'
+        workingDirectory: '$(Pipeline.Workspace)/runner-images'
 
       - script: |
           packer build -var "subscription_id=$(SubscriptionId)" \
