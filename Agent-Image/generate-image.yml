@@ -30,10 +30,14 @@ jobs:
           script: |
             printenv
             ls -la
-
+      
       - script: |
           packer init -upgrade
-          
+        displayName: 'Initialize packer'
+        failOnStderr: false
+        workingDirectory: '$(Pipeline.Workspace)/runner-images/images/ubuntu/templates/ubuntu-22.04.pkr.hcl'
+
+      - script: |
           packer build -var "subscription_id=$(SubscriptionId)" \
              -var "client_id=$(ClientId)" \
              -var "client_secret=$(ClientSecret)" \
