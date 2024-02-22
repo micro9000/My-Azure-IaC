@@ -17,8 +17,10 @@ jobs:
   - job: CloneRunnerImage
     displayName: Clone GitHub Runner Image Repo
     steps:
-      - checkout: git://github.com/actions/runner-images.git
-        displayName: "Clone runner images repo"
+      - script: git clone https://github.com/actions/runner-images.git
+        displayName: 'Clone Repo'
+        failOnStderr: false
+        workingDirectory: '$(Pipeline.Workspace)'
 
       - task: Bash@3
         displayName: "Dump environment variables and list files"
