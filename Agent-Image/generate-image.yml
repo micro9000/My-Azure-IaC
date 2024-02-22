@@ -7,11 +7,13 @@ pool:
 
 variables:
   - group: GenerateAgentImageCreds
+  - name: ServiceConnection
+    value: "Pay-As-You-Go"
   - name: location
     value: 'eastasia'
   - name: imageName
     value: 'ubuntu-22.04'
-  - name: ImageResourceGroupName
+  - name: ResourceGroupName
     value: 'My-DevOps-Agent-OS-Images-RG'
 
 jobs:
@@ -31,13 +33,17 @@ jobs:
           script: |
             printenv
             ls -la
-
-      - script: |
-          az login --service-principal -u $(ClientId) -p $(ClientSecret) --tenant $(TenantId)
-          az account set --subscription $(SubscriptionId)
-          az group create --name $(ImageResourceGroupName) --location eastasia
+      
+      - task: AzureCLI@2
         displayName: 'Create Resource Group'
-        failOnStderr: false
+        inputs:
+          azureSubscription: $(ServiceConnection)
+          scriptType: bash
+          scriptLocation: inlineScript
+          useGlobalConfig: false
+          inlineScript: |
+            az --version
+            az group create --name $(ResourceGroupName) --location $(location)
 
       - script: |
           packer init -upgrade images/ubuntu/templates/ubuntu-22.04.pkr.hcl
@@ -51,15 +57,9 @@ jobs:
              -var "client_secret=$(ClientSecret)" \
              -var "location=$(location)" \
              -var "managed_image_name=$(ImageName)" \
-             -var "managed_image_resource_group_name=$(ImageResourceGroupName)" \
+             -var "managed_image_resource_group_name=$(ResourceGroupName)" \
              -var "tenant_id=$(TenantId)" \
              "images/ubuntu/templates/ubuntu-22.04.pkr.hcl"
         displayName: 'Build image'
         failOnStderr: false
         workingDirectory: '$(Pipeline.Workspace)/runner-images'
-
-      - script: |
-          az ad app delete --id $(ClientId)
-          az logout
-        displayName: 'Create Resource Group'
-        failOnStderr: false
