@@ -19,7 +19,6 @@ jobs:
     steps:
       - checkout: https://github.com/actions/runner-images.git
         displayName: "Clone runner images repo"
-          workingDirectory: '$(Pipeline.Workspace)'
 
       - task: Bash@3
         displayName: "Dump environment variables and list files"
@@ -33,11 +32,11 @@ jobs:
       - script: |
           packer build -var "subscription_id=$(SubscriptionId)" \
              -var "client_id=$(ClientId)" \
-             -var "client_secret=$(ClientSecret)"
-             -var "location=$(location)"
-             -var "managed_image_name=$(ImageName)"
-             -var "managed_image_resource_group_name=$(ImageResourceGroupName)"
-             -var "tenant_id=$(TenantId)"
+             -var "client_secret=$(ClientSecret)" \
+             -var "location=$(location)" \
+             -var "managed_image_name=$(ImageName)" \
+             -var "managed_image_resource_group_name=$(ImageResourceGroupName)" \
+             -var "tenant_id=$(TenantId)" \
              "images/ubuntu/templates/ubuntu-22.04.pkr.hcl"
         displayName: 'Build image'
         failOnStderr: false
