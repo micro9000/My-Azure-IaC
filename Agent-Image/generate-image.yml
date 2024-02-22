@@ -33,6 +33,7 @@ jobs:
             ls -la
 
       - script: |
+          az account set --subscription $(SubscriptionId)
           az login --service-principal -u $(ClientId) -p $(ClientSecret) --tenant $(TenantId)
           az group create --name $(ImageResourceGroupName) --location eastasia
         displayName: 'Create Resource Group'
