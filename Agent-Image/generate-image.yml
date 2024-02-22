@@ -51,8 +51,16 @@ jobs:
         failOnStderr: false
         workingDirectory: '$(Pipeline.Workspace)/runner-images'
 
-      - script: |
-          packer build -var "subscription_id=$(SubscriptionId)" \
+      - task: AzureCLI@2
+        displayName: 'Build image'
+        inputs:
+          azureSubscription: $(ServiceConnection)
+          scriptType: bash
+          scriptLocation: inlineScript
+          useGlobalConfig: false
+          workingDirectory: '$(Pipeline.Workspace)/runner-images'
+          inlineScript: |
+            packer build -var "subscription_id=$(SubscriptionId)" \
              -var "client_id=$(ClientId)" \
              -var "client_secret=$(ClientSecret)" \
              -var "location=$(location)" \
@@ -60,6 +68,3 @@ jobs:
              -var "managed_image_resource_group_name=$(ResourceGroupName)" \
              -var "tenant_id=$(TenantId)" \
              "images/ubuntu/templates/ubuntu-22.04.pkr.hcl"
-        displayName: 'Build image'
-        failOnStderr: false
-        workingDirectory: '$(Pipeline.Workspace)/runner-images'
