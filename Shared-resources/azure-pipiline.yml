@@ -38,6 +38,7 @@ jobs:
           --resource-group $(resourceGroupName) \
           --location $(location) \
           --sku $(tfStateStorageSku) \
+          --https-only true \
           --kind StorageV2 \
           --allow-blob-public-access false
 

@@ -34,35 +34,43 @@ jobs:
           ls -la
 
     - task: TerraformInstaller@1
-      displayName: Install Terraform 1.6.3
+      displayName: Install Terraform Latest
       inputs:
-        terraformVersion: 1.6.3
+        terraformVersion: Latest
     
-    - task: TerraformTaskV4@4
-      displayName: Initialize Terraform
+    - task: AzureCLI@2
+      displayName: "Initialize Terraform"
       inputs:
-        provider: 'azurerm'
-        command: 'init'
-        backendServiceArm: '$(ServiceConnection)'
-        workingDirectory: '$(Build.SourcesDirectory)/$(INFRA_DIR)'
+        azureSubscription: $(ServiceConnection)
+        scriptType: bash
+        scriptLocation: inlineScript
+        workingDirectory: '$(Pipeline.Workspace)/$(INFRA_DIR)'
+        useGlobalConfig: false
+        inlineScript: |
+          terraform init \
+          -backend-config="resource_group_name=$(resourceGroupName)" \
+          -backend-config="storage_account_name=$(tfStateStorage)" \
+          -backend-config="container_name=$(tmpBuildAgentTFContainerName)" \
+          -backend-config="key=temp-build-agent.tfstate"
 
-    - task: TerraformTaskV4@4
-      name: terraformPlan
-      displayName: Create Terraform Plan
+    - task: AzureCLI@2
+      displayName: "Terraform Plan"
       inputs:
-        provider: 'azurerm'
-        command: 'plan'
-        commandOptions: '-out main.tfplan'
-        environmentServiceNameAzureRM: '$(ServiceConnection)'
-        workingDirectory: '$(Build.SourcesDirectory)/$(INFRA_DIR)'
+        azureSubscription: $(ServiceConnection)
+        scriptType: bash
+        scriptLocation: inlineScript
+        workingDirectory: '$(Pipeline.Workspace)/$(INFRA_DIR)'
+        useGlobalConfig: false
+        inlineScript: |
+          terraform plan
 
-    # Only runs if the 'terraformPlan' task has detected changes the in state. 
-    - task: TerraformTaskV4@4
-      displayName: Apply Terraform Apply
-      condition: eq(variables['terraformPlan.changesPresent'], 'true')
+    - task: AzureCLI@2
+      displayName: "Terraform Apply"
       inputs:
-        provider: 'azurerm'
-        command: 'apply'
-        commandOptions: 'main.tfplan'
-        environmentServiceNameAzureRM: '$(ServiceConnection)'
-        workingDirectory: '$(Build.SourcesDirectory)/$(INFRA_DIR)'
+        azureSubscription: $(ServiceConnection)
+        scriptType: bash
+        scriptLocation: inlineScript
+        workingDirectory: '$(Pipeline.Workspace)/$(INFRA_DIR)'
+        useGlobalConfig: false
+        inlineScript: |
+          terraform apply -auto-approve
