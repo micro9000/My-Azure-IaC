@@ -1,4 +1,5 @@
-# https://julie.io/writing/terraform-on-azure-pipelines-best-practices/
+# Terraform Best Practices ref: https://julie.io/writing/terraform-on-azure-pipelines-best-practices/
+
 pool:
   vmImage: ubuntu-latest
 
@@ -41,6 +42,17 @@ jobs:
       inputs:
         terraformVersion: Latest
   
+    - task: AzureCLI@2
+      displayName: 'Get TF State Storage Access Key'
+      inputs:
+        azureSubscription: $(ServiceConnection)
+        scriptType: bash
+        scriptLocation: inlineScript
+        useGlobalConfig: false
+        inlineScript: |
+          tfStateStorageKey=$(az storage account keys list -g $(resourceGroupName) -n $(tfStateStorage) --query [0].value -o tsv)
+          echo "##vso[task.setvariable variable=tfStateStorageAccessKey;issecret=true]$tfStateStorageKey"
+
     # It is expected this to fail on the first execution and the error is missing access_key
     # You need to manually create new Library variable group and integrate the created key-vault from Shared-resources
     - bash: |
