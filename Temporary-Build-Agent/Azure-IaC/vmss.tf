@@ -29,11 +29,21 @@ resource "azurerm_linux_virtual_machine_scale_set" "build-agent" {
   sku                 = "Standard_F2"
   instances           = 1
   admin_username      = "adminuser"
+  tags                                              = {
+    "__AzureDevOpsElasticPool"          = "temp-agent-pool"
+    "__AzureDevOpsElasticPoolTimeStamp" = "2/23/2024 1:08:39 PM"
+  }
+
+  automatic_os_upgrade_policy {
+    disable_automatic_rollback  = false
+    enable_automatic_os_upgrade = false
+  }
 
   admin_ssh_key {
     username   = "adminuser"
     public_key = local.first_public_key
   }
+  
 
   source_image_reference {
     publisher = "Canonical"
