@@ -1,8 +1,10 @@
+# https://julie.io/writing/terraform-on-azure-pipelines-best-practices/
 pool:
   vmImage: ubuntu-latest
 
 variables:
   - group: SharedResources
+  - group: GenerateAgentImageCreds
   - name: ServiceConnection
     value: "Pay-As-You-Go"
   - name: INFRA_DIR
@@ -38,39 +40,36 @@ jobs:
       inputs:
         terraformVersion: Latest
     
-    - task: AzureCLI@2
+    - bash: |
+        terraform init \
+          -backend-config="resource_group_name=$(TF_RESOURCE_GROUP)" \
+          -backend-config="storage_account_name=$(TF_REMOTE_BACKEND_STORAGE)" \
+          -backend-config="container_name=$(TF_CONTAINER_NAME)" \
+          -backend-config="key=$(TF_KEY)"
       displayName: "Initialize Terraform"
-      inputs:
-        azureSubscription: $(ServiceConnection)
-        scriptType: bash
-        scriptLocation: inlineScript
-        workingDirectory: '$(Pipeline.Workspace)/$(INFRA_DIR)'
-        useGlobalConfig: false
-        inlineScript: |
-          terraform init \
-          -backend-config="resource_group_name=$(resourceGroupName)" \
-          -backend-config="storage_account_name=$(tfStateStorage)" \
-          -backend-config="container_name=$(tmpBuildAgentTFContainerName)" \
-          -backend-config="key=temp-build-agent.tfstate"
+      workingDirectory: '$(Pipeline.Workspace)/$(INFRA_DIR)'
+      env:
+        TF_RESOURCE_GROUP:          $(resourceGroupName)
+        TF_REMOTE_BACKEND_STORAGE:  $(tfStateStorage)
+        TF_CONTAINER_NAME:          $(tmpBuildAgentTFContainerName)
+        TF_KEY:                     "temp-build-agent.tfstate"
 
-    - task: AzureCLI@2
-      displayName: "Terraform Plan"
-      inputs:
-        azureSubscription: $(ServiceConnection)
-        scriptType: bash
-        scriptLocation: inlineScript
-        workingDirectory: '$(Pipeline.Workspace)/$(INFRA_DIR)'
-        useGlobalConfig: false
-        inlineScript: |
-          terraform plan
+    - bash: |
+        terraform plan
+      displayName: "Initialize Terraform"
+      workingDirectory: '$(Pipeline.Workspace)/$(INFRA_DIR)'
+      env:
+        ARM_SUBSCRIPTION_ID: $(SubscriptionId)
+        ARM_CLIENT_ID:       $(ClientId)
+        ARM_CLIENT_SECRET:   $(ClientSecret)
+        ARM_TENANT_ID:       $(TenantId)
 
-    - task: AzureCLI@2
-      displayName: "Terraform Apply"
-      inputs:
-        azureSubscription: $(ServiceConnection)
-        scriptType: bash
-        scriptLocation: inlineScript
-        workingDirectory: '$(Pipeline.Workspace)/$(INFRA_DIR)'
-        useGlobalConfig: false
-        inlineScript: |
-          terraform apply -auto-approve
+    - bash: |
+        terraform apply -auto-approve
+      displayName: "Initialize Terraform"
+      workingDirectory: '$(Pipeline.Workspace)/$(INFRA_DIR)'
+      env:
+        ARM_SUBSCRIPTION_ID: $(SubscriptionId)
+        ARM_CLIENT_ID:       $(ClientId)
+        ARM_CLIENT_SECRET:   $(ClientSecret)
+        ARM_TENANT_ID:       $(TenantId)
