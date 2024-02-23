@@ -8,7 +8,7 @@ variables:
   - name: ServiceConnection
     value: "Pay-As-You-Go"
   - name: SOURCE_DIR
-    value: $(Pipeline.Workspace)/src
+    value: $(Build.SourcesDirectory)/src
   - name: INFRA_DIR
     value: "Temporary-Build-Agent/Azure-IaC"
 
@@ -25,9 +25,6 @@ resources:
 jobs:
   - job: ApplyAzureInfra
     steps:
-    - checkout: self
-      displayName: 'Checkout repository'
-      path: '$(SOURCE_DIR)'
 
     - task: Bash@3
       displayName: "Dump environment variables and list files"
