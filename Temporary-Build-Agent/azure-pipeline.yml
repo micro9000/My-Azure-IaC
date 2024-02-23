@@ -40,14 +40,20 @@ jobs:
       inputs:
         terraformVersion: Latest
     
-    - bash: |
-        terraform init \
-          -backend-config="resource_group_name=$(TF_RESOURCE_GROUP)" \
-          -backend-config="storage_account_name=$(TF_REMOTE_BACKEND_STORAGE)" \
-          -backend-config="container_name=$(TF_CONTAINER_NAME)" \
-          -backend-config="key=$(TF_KEY)"
+    - task: AzureCLI@2
       displayName: "Initialize Terraform"
-      workingDirectory: '$(SOURCE_DIR)/$(INFRA_DIR)'
+      inputs:
+        azureSubscription: $(ServiceConnection)
+        workingDirectory: '$(SOURCE_DIR)/$(INFRA_DIR)'
+        scriptType: bash
+        scriptLocation: inlineScript
+        useGlobalConfig: false
+        inlineScript: |
+          terraform init \
+            -backend-config="resource_group_name=$TF_RESOURCE_GROUP" \
+            -backend-config="storage_account_name=$TF_REMOTE_BACKEND_STORAGE" \
+            -backend-config="container_name=$TF_CONTAINER_NAME" \
+            -backend-config="key=$TF_KEY"
       env:
         TF_RESOURCE_GROUP:          $(resourceGroupName)
         TF_REMOTE_BACKEND_STORAGE:  $(tfStateStorage)
@@ -56,7 +62,7 @@ jobs:
 
     - bash: |
         terraform plan
-      displayName: "Initialize Terraform"
+      displayName: "Terraform Plan"
       workingDirectory: '$(SOURCE_DIR)/$(INFRA_DIR)'
       env:
         ARM_SUBSCRIPTION_ID: $(SubscriptionId)
@@ -66,7 +72,7 @@ jobs:
 
     - bash: |
         terraform apply -auto-approve
-      displayName: "Initialize Terraform"
+      displayName: "Terraform Apply"
       workingDirectory: '$(SOURCE_DIR)/$(INFRA_DIR)'
       env:
         ARM_SUBSCRIPTION_ID: $(SubscriptionId)
