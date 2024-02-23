@@ -43,11 +43,7 @@ jobs:
       inputs:
         provider: 'azurerm'
         command: 'init'
-        backendServiceArm: '$(ServiceConnection)'
-        backendAzureRmResourceGroupName: '$(resourceGroupName)'
-        backendAzureRmStorageAccountName: '$(tfStateStorage)'
-        backendAzureRmContainerName: '$(tmpBuildAgentTFContainerName)'
-        backendAzureRmKey: 'terraform.tfstate'
+        environmentServiceNameAzureRM: '$(ServiceConnection)'
         workingDirectory: '$(Build.SourcesDirectory)/$(INFRA_DIR)'
 
     - task: TerraformTaskV4@4
