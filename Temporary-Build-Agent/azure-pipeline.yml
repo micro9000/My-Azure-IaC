@@ -6,7 +6,7 @@ variables:
   - name: ServiceConnection
     value: "Pay-As-You-Go"
   - name: INFRA_DIR
-    value: "Azure-IaC"
+    value: "Temporary-Build-Agent/Azure-IaC"
 
 # https://learn.microsoft.com/en-us/azure/devops/pipelines/process/pipeline-triggers?view=azure-devops
 resources:
@@ -18,6 +18,8 @@ resources:
 jobs:
   - job: ApplyAzureInfra
     steps:
+    - checkout: self
+      displayName: 'Checkout repository'
 
     - task: Bash@3
       displayName: "Dump environment variables and list files"
@@ -27,6 +29,11 @@ jobs:
         script: |
           printenv
           ls -la
+
+    - task: TerraformInstaller@1
+      displayName: Install Terraform 1.6.3
+      inputs:
+        terraformVersion: 1.6.3
     
     - task: TerraformTaskV4@4
       displayName: Initialize Terraform
