@@ -10,7 +10,7 @@ variables:
   - name: ServiceConnection
     value: "Pay-As-You-Go"
   - name: INFRA_DIR
-    value: "IaC"
+    value: "Azure-IaC"
 
 # https://learn.microsoft.com/en-us/azure/devops/pipelines/process/pipeline-triggers?view=azure-devops
 resources:
@@ -19,51 +19,53 @@ resources:
     source: build-shared-resources # The name of the pipeline referenced by this pipeline resource.
     trigger: true
 
-steps:
-- task: TerraformTaskV4@0
-  displayName: 'Install Terraform'
-  inputs:
-    terraformVersion: 'latest'
+jobs:
+  - Job: ApplyAzureInfra
+    steps:
+    - task: TerraformTaskV4@0
+      displayName: 'Install Terraform'
+      inputs:
+        terraformVersion: 'latest'
 
-- checkout: self
-  displayName: 'Checkout repository'
+    - checkout: self
+      displayName: 'Checkout repository'
 
-- task: TerraformTaskV4@1
-  displayName: 'Terraform Init'
-  inputs:
-    command: 'init'
-    workingDirectory: '$(Build.SourcesDirectory)/$(INFRA_DIR)'
-    backendType: 'azurerm'
-    ensureBackend: true
-    backendServiceArm: '$(ServiceConnection)'
-    resourceGroupName: '$(resourceGroupName)'
-    storageAccountName: '$(tfStateStorage)'
-    containerName: 'temporary-build-agent-image-builder'
-    key: 'terraform.tfstate'
+    - task: TerraformTaskV4@1
+      displayName: 'Terraform Init'
+      inputs:
+        command: 'init'
+        workingDirectory: '$(Build.SourcesDirectory)/$(INFRA_DIR)'
+        backendType: 'azurerm'
+        ensureBackend: true
+        backendServiceArm: '$(ServiceConnection)'
+        resourceGroupName: '$(resourceGroupName)'
+        storageAccountName: '$(tfStateStorage)'
+        containerName: 'temporary-build-agent-image-builder'
+        key: 'terraform.tfstate'
 
-- task: TerraformTaskV3@3
-  displayName: 'Terraform Validate'
-  inputs:
-    command: 'validate'
-    workingDirectory: '$(Build.SourcesDirectory)/$(INFRA_DIR)'
+    - task: TerraformTaskV3@3
+      displayName: 'Terraform Validate'
+      inputs:
+        command: 'validate'
+        workingDirectory: '$(Build.SourcesDirectory)/$(INFRA_DIR)'
 
-- task: TerraformTaskV4@4
-  name: terraformPlan
-  displayName: Create Terraform Plan
-  inputs:
-    provider: 'azurerm'
-    command: 'plan'
-    commandOptions: '-out main.tfplan'
-    environmentServiceNameAzureRM: '$(ServiceConnection)'
-    workingDirectory: '$(Build.SourcesDirectory)/$(INFRA_DIR)'
+    - task: TerraformTaskV4@4
+      name: terraformPlan
+      displayName: Create Terraform Plan
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        commandOptions: '-out main.tfplan'
+        environmentServiceNameAzureRM: '$(ServiceConnection)'
+        workingDirectory: '$(Build.SourcesDirectory)/$(INFRA_DIR)'
 
-# Only runs if the 'terraformPlan' task has detected changes the in state. 
-- task: TerraformTaskV4@4
-  displayName: Apply Terraform Plan
-  condition: eq(variables['terraformPlan.changesPresent'], 'true')
-  inputs:
-    provider: 'azurerm'
-    command: 'apply'
-    commandOptions: 'main.tfplan'
-    environmentServiceNameAzureRM: '$(ServiceConnection)'
-    workingDirectory: '$(Build.SourcesDirectory)/$(INFRA_DIR)'
+    # Only runs if the 'terraformPlan' task has detected changes the in state. 
+    - task: TerraformTaskV4@4
+      displayName: Apply Terraform Plan
+      condition: eq(variables['terraformPlan.changesPresent'], 'true')
+      inputs:
+        provider: 'azurerm'
+        command: 'apply'
+        commandOptions: 'main.tfplan'
+        environmentServiceNameAzureRM: '$(ServiceConnection)'
+        workingDirectory: '$(Build.SourcesDirectory)/$(INFRA_DIR)'
