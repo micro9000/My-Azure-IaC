@@ -19,9 +19,15 @@ jobs:
   - job: ApplyAzureInfra
     steps:
 
-    - checkout: self
-      displayName: 'Checkout repository'
-
+    - task: Bash@3
+      displayName: "Dump environment variables and list files"
+      inputs:
+        workingDirectory: '$(Pipeline.Workspace)'
+        targetType: inline
+        script: |
+          printenv
+          ls -la
+    
     - task: TerraformTaskV4@4
       displayName: Initialize Terraform
       inputs:
@@ -45,7 +51,7 @@ jobs:
 
     # Only runs if the 'terraformPlan' task has detected changes the in state. 
     - task: TerraformTaskV4@4
-      displayName: Apply Terraform Plan
+      displayName: Apply Terraform Apply
       condition: eq(variables['terraformPlan.changesPresent'], 'true')
       inputs:
         provider: 'azurerm'
