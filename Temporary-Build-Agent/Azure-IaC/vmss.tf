@@ -78,7 +78,7 @@ resource "azurerm_virtual_machine_scale_set_extension" "build-agent" {
   type                         = "CustomScript"
   type_handler_version         = "2.0"
   settings = jsonencode({
-    "fileUris": ["https://raw.githubusercontent.com/micro9000/My-Azure-IaC/main/Temporary-Build-Agent/init_script.sh"],
+    "fileUris": ["https://raw.githubusercontent.com/micro9000/My-Azure-IaC/main/Temporary-Build-Agent/Azure-IaC/init_script.sh"],
     "commandToExecute" = "chmod +x ./init_script.sh && bash ./init_script.sh"
   })
 }
