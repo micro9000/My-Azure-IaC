@@ -1,6 +1,11 @@
 # This is build in https://dev.azure.com/RichCorner/DevOpsInfrastructures/
 trigger:
-  - main
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - Shared-resources
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -25,6 +30,7 @@ jobs:
           az group create --name $(resourceGroupName) --location $(location)
 
     # https://learn.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-cli
+    # This storage account will hold the Terraform State files
     - task: AzureCLI@2
       displayName: 'Create TF Shared Storage Account'
       inputs:

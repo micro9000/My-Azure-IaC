@@ -22,6 +22,9 @@ resources:
       branches:
         include: 
         - main
+      paths:
+        include:
+        - Temporary-Build-Agent
 
 jobs:
   - job: ApplyAzureInfra
@@ -80,7 +83,7 @@ jobs:
 
     - bash: |
         terraform apply -auto-approve
-      displayName: "Terraform Plan"
+      displayName: "Terraform Apply"
       workingDirectory: '$(SOURCE_DIR)/$(INFRA_DIR)'
       env:
         ARM_SUBSCRIPTION_ID: $(SubscriptionId)
