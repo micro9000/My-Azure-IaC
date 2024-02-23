@@ -27,7 +27,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "build-agent" {
   resource_group_name = azurerm_resource_group.build-agent.name
   location            = azurerm_resource_group.build-agent.location
   sku                 = "Standard_F2"
-  instances           = 1
+  instances           = 2
   admin_username      = "adminuser"
 
   overprovision       = false
