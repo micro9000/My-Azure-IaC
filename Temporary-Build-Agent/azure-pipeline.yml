@@ -6,7 +6,6 @@ pool:
 variables:
   - group: SharedResources
   - group: GenerateAgentImageCreds
-  - group: TFCLIExecutionCreds
   - name: ServiceConnection
     value: "Pay-As-You-Go"
   - name: SOURCE_DIR
