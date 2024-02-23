@@ -22,10 +22,7 @@ resources:
       branches:
         include: 
         - main
-      paths:
-        include:
-        - Temporary-Build-Agent/*
-
+        
 jobs:
   - job: ApplyAzureInfra
     steps:
