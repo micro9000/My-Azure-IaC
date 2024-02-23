@@ -45,6 +45,7 @@ jobs:
         backendAzureRmStorageAccountName: '$(tfStateStorage)'
         backendAzureRmContainerName: 'temporary-build-agent-image-builder'
         backendAzureRmKey: 'terraform.tfstate'
+        workingDirectory: '$(Build.SourcesDirectory)/$(INFRA_DIR)'
 
     - task: TerraformTaskV4@4
       name: terraformPlan
