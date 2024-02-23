@@ -61,7 +61,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "build-agent" {
 }
 
 resource "azurerm_virtual_machine_scale_set_extension" "build-agent-custom-script" {
-  name                         = "${local.prefix}-vmss-extension"
+  name                         = "${local.prefix}-vmss-extension-custom-script"
   virtual_machine_scale_set_id = azurerm_linux_virtual_machine_scale_set.build-agent.id
   publisher                    = "Microsoft.Azure.Extensions"
   type                         = "CustomScript"
@@ -73,7 +73,7 @@ resource "azurerm_virtual_machine_scale_set_extension" "build-agent-custom-scrip
 }
 
 resource "azurerm_virtual_machine_scale_set_extension" "build-agent-team-services-agent" {
-  name                         = "${local.prefix}-vmss-extension"
+  name                         = "${local.prefix}-vmss-extension-agent"
   virtual_machine_scale_set_id = azurerm_linux_virtual_machine_scale_set.build-agent.id
   publisher                    = "Microsoft.VisualStudio.Services"
   type                         = "TeamServicesAgentLinux"
