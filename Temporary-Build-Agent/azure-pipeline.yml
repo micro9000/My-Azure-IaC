@@ -52,14 +52,12 @@ jobs:
           tfStateStorageKey=$(az storage account keys list -g $(resourceGroupName) -n $(tfStateStorage) --query [0].value -o tsv)
           echo "##vso[task.setvariable variable=tfStateStorageAccessKey;issecret=true]$tfStateStorageKey"
 
-    # It is expected this to fail on the first execution and the error is missing access_key
-    # You need to manually create new Library variable group and integrate the created key-vault from Shared-resources
     - bash: |
         terraform init \
           -backend-config="resource_group_name=$TF_RESOURCE_GROUP" \
           -backend-config="storage_account_name=$TF_REMOTE_BACKEND_STORAGE" \
           -backend-config="container_name=$TF_CONTAINER_NAME" \
-          -backend-config="key=$TF_KEY"
+          -backend-config="key=$TF_KEY" \
           -backend-config="access_key=$TF_STORAGE_ACCESS_KEY"
       displayName: "Initialize Terraform"
       workingDirectory: '$(SOURCE_DIR)/$(INFRA_DIR)'
