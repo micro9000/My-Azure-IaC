@@ -3,7 +3,7 @@
 trigger: none
 
 pool:
-  name: 'temp-agent-pool'
+  name: 'temp-agent-vmss-pool'
 
 variables:
   - group: GenerateAgentImageCreds
