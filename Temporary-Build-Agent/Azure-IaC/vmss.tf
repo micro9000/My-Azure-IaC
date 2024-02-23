@@ -33,8 +33,8 @@ resource "azurerm_linux_virtual_machine_scale_set" "build-agent" {
   overprovision       = false
   single_placement_group  = false
   tags                                              = {
-    "__AzureDevOpsElasticPool"          = "temp-agent-pool"
-    "__AzureDevOpsElasticPoolTimeStamp" = "2/23/2024 2:37:21 PM"
+    "__AzureDevOpsElasticPool"          = "temp-agent-vmss-pool"
+    "__AzureDevOpsElasticPoolTimeStamp" = "2/23/2024 2:58:07 PM"
   }
 
   automatic_os_upgrade_policy {
