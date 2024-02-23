@@ -1,0 +1,48 @@
+# This is build in https://dev.azure.com/RichCorner/DevOpsInfrastructures/
+trigger:
+  - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - name: ServiceConnection
+    value: "Pay-As-You-Go"
+  - name: location
+    value: 'eastasia'
+  - name: ResourceGroupName
+    value: 'SharedResourcesRG'
+  - name: TFStateStorage
+    value: 'TFStateSharedRemoteStorage'
+  - name: TFStateStorageSku
+    value: 'Standard_LRS'
+
+steps:
+- task: AzureCLI@2
+  displayName: 'Create Resource Group'
+  inputs:
+    azureSubscription: $(ServiceConnection)
+    scriptType: bash
+    scriptLocation: inlineScript
+    useGlobalConfig: false
+    inlineScript: |
+      az --version
+      az group create --name $(ResourceGroupName) --location $(location)
+
+# https://learn.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-cli
+- task: AzureCLI@2
+  displayName: 'Create TF Shared Storage Account'
+  inputs:
+    azureSubscription: $(ServiceConnection)
+    scriptType: bash
+    scriptLocation: inlineScript
+    useGlobalConfig: false
+    inlineScript: |
+      az storage account create \
+      --name $(TFStateStorage) \
+      --resource-group $(ResourceGroupName) \
+      --location $(location) \
+      --sku $(TFStateStorageSku) \
+      --kind StorageV2 \
+      --allow-blob-public-access false
+
