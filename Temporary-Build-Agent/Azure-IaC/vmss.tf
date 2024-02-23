@@ -4,7 +4,7 @@ locals {
 
 resource "azurerm_resource_group" "build-agent" {
   name     = "build-agent-resources"
-  location = "West Europe"
+  location = "East Asia"
 }
 
 resource "azurerm_virtual_network" "build-agent" {
