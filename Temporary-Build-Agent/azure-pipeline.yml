@@ -20,7 +20,7 @@ resources:
     trigger: true
 
 jobs:
-  - Job: ApplyAzureInfra
+  - job: ApplyAzureInfra
     steps:
     - task: TerraformTaskV4@0
       displayName: 'Install Terraform'
