@@ -5,7 +5,7 @@ trigger:
     - main
   paths:
     include:
-    - Shared-resources
+    - Shared-resources/*
 
 pool:
   vmImage: 'ubuntu-latest'
