@@ -10,32 +10,39 @@ variables:
     value: "Pay-As-You-Go"
   - group: SharedResources
 
-steps:
-- task: AzureCLI@2
-  displayName: 'Create Resource Group'
-  inputs:
-    azureSubscription: $(ServiceConnection)
-    scriptType: bash
-    scriptLocation: inlineScript
-    useGlobalConfig: false
-    inlineScript: |
-      az --version
-      az group create --name $(resourceGroupName) --location $(location)
+jobs:
+  - job: BuildSharedResources
+    steps:
+    - task: AzureCLI@2
+      displayName: 'Create Resource Group'
+      inputs:
+        azureSubscription: $(ServiceConnection)
+        scriptType: bash
+        scriptLocation: inlineScript
+        useGlobalConfig: false
+        inlineScript: |
+          az --version
+          az group create --name $(resourceGroupName) --location $(location)
 
-# https://learn.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-cli
-- task: AzureCLI@2
-  displayName: 'Create TF Shared Storage Account'
-  inputs:
-    azureSubscription: $(ServiceConnection)
-    scriptType: bash
-    scriptLocation: inlineScript
-    useGlobalConfig: false
-    inlineScript: |
-      az storage account create \
-      --name $(tfStateStorage) \
-      --resource-group $(resourceGroupName) \
-      --location $(location) \
-      --sku $(tfStateStorageSku) \
-      --kind StorageV2 \
-      --allow-blob-public-access false
+    # https://learn.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-cli
+    - task: AzureCLI@2
+      displayName: 'Create TF Shared Storage Account'
+      inputs:
+        azureSubscription: $(ServiceConnection)
+        scriptType: bash
+        scriptLocation: inlineScript
+        useGlobalConfig: false
+        inlineScript: |
+          az storage account create \
+          --name $(tfStateStorage) \
+          --resource-group $(resourceGroupName) \
+          --location $(location) \
+          --sku $(tfStateStorageSku) \
+          --kind StorageV2 \
+          --allow-blob-public-access false
+
+          az storage container create \
+          --name $(tmpBuildAgentTFContainerName) \
+          --account-name $(tfStateStorage) \
+          --auth-mode login
 
