@@ -8,14 +8,7 @@ pool:
 variables:
   - name: ServiceConnection
     value: "Pay-As-You-Go"
-  - name: location
-    value: 'eastasia'
-  - name: ResourceGroupName
-    value: 'SharedResourcesRG'
-  - name: TFStateStorage
-    value: 'TFStateSharedRemoteStorage'
-  - name: TFStateStorageSku
-    value: 'Standard_LRS'
+  - group: SharedResources
 
 steps:
 - task: AzureCLI@2
@@ -27,7 +20,7 @@ steps:
     useGlobalConfig: false
     inlineScript: |
       az --version
-      az group create --name $(ResourceGroupName) --location $(location)
+      az group create --name $(resourceGroupName) --location $(location)
 
 # https://learn.microsoft.com/en-us/azure/storage/common/storage-account-create?tabs=azure-cli
 - task: AzureCLI@2
@@ -39,10 +32,10 @@ steps:
     useGlobalConfig: false
     inlineScript: |
       az storage account create \
-      --name $(TFStateStorage) \
-      --resource-group $(ResourceGroupName) \
+      --name $(tfStateStorage) \
+      --resource-group $(resourceGroupName) \
       --location $(location) \
-      --sku $(TFStateStorageSku) \
+      --sku $(tfStateStorageSku) \
       --kind StorageV2 \
       --allow-blob-public-access false
 
