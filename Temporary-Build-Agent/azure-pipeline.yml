@@ -5,6 +5,7 @@ pool:
 variables:
   - group: SharedResources
   - group: GenerateAgentImageCreds
+  - group: TFCLIExecutionCreds
   - name: ServiceConnection
     value: "Pay-As-You-Go"
   - name: SOURCE_DIR
@@ -41,7 +42,7 @@ jobs:
         terraformVersion: Latest
   
     # It is expected this to fail on the first execution and the error is missing access_key
-    # You need to integrate the create key-vault from Shared-resources into SharedResources Library variable group
+    # You need to manually create new Library variable group and integrate the created key-vault from Shared-resources
     - bash: |
         terraform init \
           -backend-config="resource_group_name=$TF_RESOURCE_GROUP" \
@@ -56,7 +57,7 @@ jobs:
         TF_REMOTE_BACKEND_STORAGE:  $(tfStateStorage)
         TF_CONTAINER_NAME:          $(tmpBuildAgentTFContainerName)
         TF_KEY:                     "temp-build-agent.tfstate"
-        TF_STORAGE_ACCESS_KEY:      $(tmpBuildAgentTFContainerName)
+        TF_STORAGE_ACCESS_KEY:      $(tfStateStorageAccessKey)
 
     - bash: |
         terraform plan
