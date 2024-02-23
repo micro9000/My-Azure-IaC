@@ -3,10 +3,6 @@ trigger:
   branches:
     include:
     - main
-  paths:
-    include:
-    - Shared-resources/*
-    - Temporary-Build-Agent/*
 
 pool:
   vmImage: 'ubuntu-latest'
