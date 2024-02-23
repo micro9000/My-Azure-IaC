@@ -41,6 +41,14 @@ jobs:
           --kind StorageV2 \
           --allow-blob-public-access false
 
+    - task: AzureCLI@2
+      displayName: 'Create Tmp Build Agent TF container name'
+      inputs:
+        azureSubscription: $(ServiceConnection)
+        scriptType: bash
+        scriptLocation: inlineScript
+        useGlobalConfig: false
+        inlineScript: |
           az storage container create \
           --name $(tmpBuildAgentTFContainerName) \
           --account-name $(tfStateStorage) \
