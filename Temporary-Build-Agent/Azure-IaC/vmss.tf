@@ -30,8 +30,8 @@ resource "azurerm_linux_virtual_machine_scale_set" "build-agent" {
   instances           = 1
   admin_username      = "adminuser"
 
-  overprovision       = true
-  single_placement_group  = true
+  overprovision       = false
+  single_placement_group  = false
   tags                                              = {
     "__AzureDevOpsElasticPool"          = "temp-agent-pool"
     "__AzureDevOpsElasticPoolTimeStamp" = "2/23/2024 2:37:21 PM"
