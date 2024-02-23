@@ -1,7 +1,3 @@
-
-trigger:
-- main
-
 pool:
   vmImage: ubuntu-latest
 
@@ -22,11 +18,6 @@ resources:
 jobs:
   - job: ApplyAzureInfra
     steps:
-    - task: TerraformTaskV4@4
-      displayName: 'Install Terraform'
-      inputs:
-        terraformVersion: 'latest'
-        backendServiceArm: '$(ServiceConnection)'
 
     - checkout: self
       displayName: 'Checkout repository'
