@@ -30,6 +30,18 @@ resource "azurerm_linux_virtual_machine_scale_set" "build-agent" {
   instances           = 2
   admin_username      = "adminuser"
 
+  overprovision           = false
+  single_placement_group  = false
+  tags                                              = {
+    "__AzureDevOpsElasticPool"          = "temp-agent-vmss-pool"
+    "__AzureDevOpsElasticPoolTimeStamp" = "2/23/2024 3:22:44 PM"
+  }
+
+  automatic_os_upgrade_policy {
+    disable_automatic_rollback  = false
+    enable_automatic_os_upgrade = false
+  }
+
   admin_ssh_key {
     username   = "adminuser"
     public_key = local.first_public_key
@@ -58,6 +70,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "build-agent" {
       subnet_id = azurerm_subnet.internal.id
     }
   }
+  
 }
 
 resource "azurerm_virtual_machine_scale_set_extension" "build-agent-custom-script" {
