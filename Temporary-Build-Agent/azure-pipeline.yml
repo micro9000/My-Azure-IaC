@@ -30,24 +30,16 @@ jobs:
     - checkout: self
       displayName: 'Checkout repository'
 
-    - task: TerraformTaskV4@1
-      displayName: 'Terraform Init'
+    - task: TerraformTaskV4@4
+      displayName: Initialize Terraform
       inputs:
+        provider: 'azurerm'
         command: 'init'
-        workingDirectory: '$(Build.SourcesDirectory)/$(INFRA_DIR)'
-        backendType: 'azurerm'
-        ensureBackend: true
         backendServiceArm: '$(ServiceConnection)'
-        resourceGroupName: '$(resourceGroupName)'
-        storageAccountName: '$(tfStateStorage)'
-        containerName: 'temporary-build-agent-image-builder'
-        key: 'terraform.tfstate'
-
-    - task: TerraformTaskV3@3
-      displayName: 'Terraform Validate'
-      inputs:
-        command: 'validate'
-        workingDirectory: '$(Build.SourcesDirectory)/$(INFRA_DIR)'
+        backendAzureRmResourceGroupName: '$(resourceGroupName)'
+        backendAzureRmStorageAccountName: '$(tfStateStorage)'
+        backendAzureRmContainerName: 'temporary-build-agent-image-builder'
+        backendAzureRmKey: 'terraform.tfstate'
 
     - task: TerraformTaskV4@4
       name: terraformPlan
