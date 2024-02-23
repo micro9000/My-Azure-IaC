@@ -30,6 +30,18 @@ resource "azurerm_linux_virtual_machine_scale_set" "build-agent" {
   instances           = 1
   admin_username      = "adminuser"
 
+  overprovision       = true
+  single_placement_group  = true
+  tags                                              = {
+    "__AzureDevOpsElasticPool"          = "temp-agent-pool"
+    "__AzureDevOpsElasticPoolTimeStamp" = "2/23/2024 2:37:21 PM"
+  }
+
+  automatic_os_upgrade_policy {
+    disable_automatic_rollback  = false
+    enable_automatic_os_upgrade = false
+  }
+
   admin_ssh_key {
     username   = "adminuser"
     public_key = local.first_public_key
