@@ -24,7 +24,7 @@ resources:
         - main
       paths:
         include:
-        - Temporary-Build-Agent
+        - Temporary-Build-Agent/*
 
 jobs:
   - job: ApplyAzureInfra
