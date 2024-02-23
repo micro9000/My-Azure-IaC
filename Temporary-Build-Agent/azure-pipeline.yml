@@ -43,7 +43,7 @@ jobs:
       inputs:
         provider: 'azurerm'
         command: 'init'
-        environmentServiceNameAzureRM: '$(ServiceConnection)'
+        backendServiceArm: '$(ServiceConnection)'
         workingDirectory: '$(Build.SourcesDirectory)/$(INFRA_DIR)'
 
     - task: TerraformTaskV4@4
