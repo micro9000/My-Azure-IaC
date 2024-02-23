@@ -39,26 +39,24 @@ jobs:
       displayName: Install Terraform Latest
       inputs:
         terraformVersion: Latest
-    
-    - task: AzureCLI@2
+  
+    # It is expected this to fail on the first execution and the error is missing access_key
+    # You need to integrate the create key-vault from Shared-resources into SharedResources Library variable group
+    - bash: |
+        terraform init \
+          -backend-config="resource_group_name=$TF_RESOURCE_GROUP" \
+          -backend-config="storage_account_name=$TF_REMOTE_BACKEND_STORAGE" \
+          -backend-config="container_name=$TF_CONTAINER_NAME" \
+          -backend-config="key=$TF_KEY"
+          -backend-config="access_key=$TF_STORAGE_ACCESS_KEY"
       displayName: "Initialize Terraform"
-      inputs:
-        azureSubscription: $(ServiceConnection)
-        workingDirectory: '$(SOURCE_DIR)/$(INFRA_DIR)'
-        scriptType: bash
-        scriptLocation: inlineScript
-        useGlobalConfig: false
-        inlineScript: |
-          terraform init \
-            -backend-config="resource_group_name=$TF_RESOURCE_GROUP" \
-            -backend-config="storage_account_name=$TF_REMOTE_BACKEND_STORAGE" \
-            -backend-config="container_name=$TF_CONTAINER_NAME" \
-            -backend-config="key=$TF_KEY"
+      workingDirectory: '$(SOURCE_DIR)/$(INFRA_DIR)'
       env:
         TF_RESOURCE_GROUP:          $(resourceGroupName)
         TF_REMOTE_BACKEND_STORAGE:  $(tfStateStorage)
         TF_CONTAINER_NAME:          $(tmpBuildAgentTFContainerName)
         TF_KEY:                     "temp-build-agent.tfstate"
+        TF_STORAGE_ACCESS_KEY:      $(tmpBuildAgentTFContainerName)
 
     - bash: |
         terraform plan
@@ -72,7 +70,7 @@ jobs:
 
     - bash: |
         terraform apply -auto-approve
-      displayName: "Terraform Apply"
+      displayName: "Terraform Plan"
       workingDirectory: '$(SOURCE_DIR)/$(INFRA_DIR)'
       env:
         ARM_SUBSCRIPTION_ID: $(SubscriptionId)

@@ -55,3 +55,23 @@ jobs:
           --account-name $(tfStateStorage) \
           --auth-mode login
 
+    - task: AzureCLI@2
+      displayName: 'Create Key-Vault'
+      inputs:
+        azureSubscription: $(ServiceConnection)
+        scriptType: bash
+        scriptLocation: inlineScript
+        useGlobalConfig: false
+        inlineScript: |
+          az keyvault create --location $(location) --name $(keyVaultName) --resource-group $(resourceGroupName)
+
+    - task: AzureCLI@2
+      displayName: 'Store TF Shared Storage Account Key in Key-Vault'
+      inputs:
+        azureSubscription: $(ServiceConnection)
+        scriptType: bash
+        scriptLocation: inlineScript
+        useGlobalConfig: false
+        inlineScript: |
+          tfStateStorageKey=$(az storage account keys list -g $(resourceGroupName) -n $(tfStateStorage) --query [0].value -o tsv)
+          az keyvault secret set --name $(tfStateStorageAccessKeyName) --vault-name $(keyVaultName) --value $tfStateStorageKey
