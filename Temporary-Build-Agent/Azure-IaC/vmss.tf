@@ -30,18 +30,6 @@ resource "azurerm_linux_virtual_machine_scale_set" "build-agent" {
   instances           = 2
   admin_username      = "adminuser"
 
-  overprovision       = false
-  single_placement_group  = false
-  tags                                              = {
-    "__AzureDevOpsElasticPool"          = "temp-agent-vmss-pool"
-    "__AzureDevOpsElasticPoolTimeStamp" = "2/23/2024 2:58:07 PM"
-  }
-
-  automatic_os_upgrade_policy {
-    disable_automatic_rollback  = false
-    enable_automatic_os_upgrade = false
-  }
-
   admin_ssh_key {
     username   = "adminuser"
     public_key = local.first_public_key
@@ -72,7 +60,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "build-agent" {
   }
 }
 
-resource "azurerm_virtual_machine_scale_set_extension" "build-agent" {
+resource "azurerm_virtual_machine_scale_set_extension" "build-agent-custom-script" {
   name                         = "${local.prefix}-vmss-extension"
   virtual_machine_scale_set_id = azurerm_linux_virtual_machine_scale_set.build-agent.id
   publisher                    = "Microsoft.Azure.Extensions"
@@ -81,5 +69,19 @@ resource "azurerm_virtual_machine_scale_set_extension" "build-agent" {
   settings = jsonencode({
     "fileUris": ["https://github.com/micro9000/My-Azure-IaC/blob/main/Temporary-Build-Agent/Azure-IaC/init_script.sh"],
     "commandToExecute" = "chmod +x ./init_script.sh && bash ./init_script.sh"
+  })
+}
+
+resource "azurerm_virtual_machine_scale_set_extension" "build-agent-team-services-agent" {
+  name                         = "${local.prefix}-vmss-extension"
+  virtual_machine_scale_set_id = azurerm_linux_virtual_machine_scale_set.build-agent.id
+  publisher                    = "Microsoft.VisualStudio.Services"
+  type                         = "TeamServicesAgentLinux"
+  type_handler_version         = "1.23"
+  settings = jsonencode({
+    "isPipelinesAgent": true,
+    "agentFolder": "/agent",
+    "agentDownloadUrl": "https://vstsagentpackage.azureedge.net/agent/3.234.0/vsts-agent-linux-x64-3.234.0.tar.gz",
+    "enableScriptDownloadUrl": "https://vstsagenttools.blob.core.windows.net/tools/ElasticPools/Linux/15/enableagent.sh"
   })
 }
