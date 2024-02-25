@@ -1,5 +1,4 @@
 locals {
-  first_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDNswICCIklyE4C5Q8rNMCYgQ3oHBOkD2SZUIzTlT0OfIJ8bPf35EW4OzMEsq7ZFlx8YHs8RHbcut+5jC8hDFubYX2QnVpTYNVIHBhUkItUtdZX87vMy9oSocssCF/xr4w9lOQgLtbKWG2IjRWL3Vy711jsFaGD+WDDf7K5D48nDoR+AI/cLyJLyFRe0XXvTuz/57ZEw9XCYASKUUdJ6tXpszexQzYuDOjrLw7yzT2+phnS1oOYjU9k/nvdxQXmaok8NMXHpFrIwl07P7dUEQ3Q9tvN33gbUPMRP91epxETN24k4QlTsyFzwrnyzI2o1/o6h95jnBQyjXb9qb1Nso17SuC8PeBkJhXvJkM65lAotsR0vBclV6ni4mIl3oYIhKihyNVgFzdqz7M8FR9YxXiH6dGXyqn17unx9fvLY2tIiTlfPx+QVl3I2C0t2+f77WT1aSq2BIl0tc7+LLyae1RedjxxSqUX0/6vTHhQh52FGFjeCP2ZLb3/9GvqFrrdDavt5dS1v8JkBfREGZNgychMhPiv+TCwV3/fNmVuhiP/sAJsNSe9r8hCwa8N8YEi105lF1jAgXSLpunA7I4y3whMVJHET1y9U2QR/dGDQLS583l6uBr4fqD+iLk3+yLGHnQcuTbxFMRKoB7xuedBBhyr1IM8/VIqRWSwivt2p7ZSnw== ranie@raniel-garcia"
   prefix = "temp-agent"
 }
 
@@ -29,24 +28,16 @@ resource "azurerm_linux_virtual_machine_scale_set" "build-agent" {
   sku                 = "Standard_F2"
   instances           = 2
   admin_username      = "adminuser"
+  admin_password      = var.vmss_admin_password
+  disable_password_authentication  = false
 
-  overprovision           = false
+  overprovision = false
   single_placement_group  = false
-  tags                                              = {
-    "__AzureDevOpsElasticPool"          = "temp-agent-vmss-pool"
-    "__AzureDevOpsElasticPoolTimeStamp" = "2/23/2024 3:22:44 PM"
-  }
 
   automatic_os_upgrade_policy {
     disable_automatic_rollback  = false
     enable_automatic_os_upgrade = false
   }
-
-  admin_ssh_key {
-    username   = "adminuser"
-    public_key = local.first_public_key
-  }
-  
 
   source_image_reference {
     publisher = "Canonical"
@@ -71,30 +62,11 @@ resource "azurerm_linux_virtual_machine_scale_set" "build-agent" {
     }
   }
   
+  custom_data    = base64encode(data.template_file.linux-vm-cloud-init.rendered)
 }
 
-resource "azurerm_virtual_machine_scale_set_extension" "build-agent-custom-script" {
-  name                         = "${local.prefix}-vmss-extension-custom-script"
-  virtual_machine_scale_set_id = azurerm_linux_virtual_machine_scale_set.build-agent.id
-  publisher                    = "Microsoft.Azure.Extensions"
-  type                         = "CustomScript"
-  type_handler_version         = "2.0"
-  settings = jsonencode({
-    "fileUris": ["https://github.com/micro9000/My-Azure-IaC/blob/main/Temporary-Build-Agent/Azure-IaC/init_script.sh"],
-    "commandToExecute" = "chmod +x ./init_script.sh && bash ./init_script.sh"
-  })
-}
 
-resource "azurerm_virtual_machine_scale_set_extension" "build-agent-team-services-agent" {
-  name                         = "${local.prefix}-vmss-extension-agent"
-  virtual_machine_scale_set_id = azurerm_linux_virtual_machine_scale_set.build-agent.id
-  publisher                    = "Microsoft.VisualStudio.Services"
-  type                         = "TeamServicesAgentLinux"
-  type_handler_version         = "1.23"
-  settings = jsonencode({
-    "isPipelinesAgent": true,
-    "agentFolder": "/agent",
-    "agentDownloadUrl": "https://vstsagentpackage.azureedge.net/agent/3.234.0/vsts-agent-linux-x64-3.234.0.tar.gz",
-    "enableScriptDownloadUrl": "https://vstsagenttools.blob.core.windows.net/tools/ElasticPools/Linux/15/enableagent.sh"
-  })
+# Data template Bash bootstrapping file
+data "template_file" "linux-vm-cloud-init" {
+  template = file("azure-user-data.sh")
 }
