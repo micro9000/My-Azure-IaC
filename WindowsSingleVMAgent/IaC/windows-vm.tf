@@ -29,6 +29,7 @@ resource "azurerm_windows_virtual_machine" "azuredo-vm-agent" {
   resource_group_name = azurerm_resource_group.azuredo-vm-agent.name
   location            = azurerm_resource_group.azuredo-vm-agent.location
   size                = "Standard_F2"
+  computer_name       = "windows-agent"
   admin_username      = var.vm_admin_username
   admin_password      = var.vm_admin_password
   network_interface_ids = [
@@ -40,13 +41,7 @@ resource "azurerm_windows_virtual_machine" "azuredo-vm-agent" {
     storage_account_type = "Standard_LRS"
   }
 
-  source_image_reference {
-    publisher = "MicrosoftWindowsServer"
-    offer     = "WindowsServer"
-    sku       = "2016-Datacenter"
-    version   = "latest"
-  }
-
+  source_image_id = data.azurerm_image.windows-image-2022.id
   custom_data = base64encode(data.template_file.power-shell-user-data.rendered)
 }
 
