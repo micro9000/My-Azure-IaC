@@ -116,6 +116,8 @@ jobs:
           ARM_CLIENT_ID: $(ClientId)
           ARM_CLIENT_SECRET: $(ClientSecret)
           ARM_TENANT_ID: $(TenantId)
+          AZDO_ORG_SERVICE_URL: $(AZDO_ORG_SERVICE_URL)
+          AZDO_PERSONAL_ACCESS_TOKEN: $(AZDO_PERSONAL_ACCESS_TOKEN)
 
       - bash: |
           terraform apply -auto-approve
@@ -126,3 +128,5 @@ jobs:
           ARM_CLIENT_ID: $(ClientId)
           ARM_CLIENT_SECRET: $(ClientSecret)
           ARM_TENANT_ID: $(TenantId)
+          AZDO_ORG_SERVICE_URL: $(AZDO_ORG_SERVICE_URL)
+          AZDO_PERSONAL_ACCESS_TOKEN: $(AZDO_PERSONAL_ACCESS_TOKEN)
