@@ -1,8 +1,8 @@
 resource "azurerm_virtual_network" "azuredo-vm-agent" {
   name                = "agent-vm-vnet"
   address_space       = ["10.0.0.0/16"]
-  location            = azurerm_resource_group.example.location
-  resource_group_name = azurerm_resource_group.example.name
+  location            = azurerm_resource_group.azuredo-vm-agent.location
+  resource_group_name = azurerm_resource_group.azuredo-vm-agent.name
 }
 
 resource "azurerm_subnet" "azuredo-vm-agent" {
