@@ -116,7 +116,6 @@ jobs:
           ARM_CLIENT_ID: $(ClientId)
           ARM_CLIENT_SECRET: $(ClientSecret)
           ARM_TENANT_ID: $(TenantId)
-          vm_admin_password: $(vm_admin_password)
 
       - bash: |
           terraform apply -auto-approve
@@ -127,4 +126,3 @@ jobs:
           ARM_CLIENT_ID: $(ClientId)
           ARM_CLIENT_SECRET: $(ClientSecret)
           ARM_TENANT_ID: $(TenantId)
-          vm_admin_password: $(vm_admin_password)
