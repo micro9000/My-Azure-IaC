@@ -5,8 +5,12 @@ terraform {
       version = "3.92.0"
     }
     azuredevops = {
-      source = "microsoft/azuredevops"
+      source  = "microsoft/azuredevops"
       version = "0.11.0"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "3.6.0"
     }
   }
   backend "azurerm" {
@@ -22,4 +26,8 @@ provider "azurerm" {
 }
 
 provider "azuredevops" {
+}
+
+provider "random" {
+  # Configuration options
 }

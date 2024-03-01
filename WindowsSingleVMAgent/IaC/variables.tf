@@ -1,9 +1,9 @@
 variable "vm_computer_name" {
-  type      = string
+  type = string
 }
 
 variable "vm_admin_username" {
-  type      = string
+  type = string
 }
 
 variable "vm_admin_password" {
