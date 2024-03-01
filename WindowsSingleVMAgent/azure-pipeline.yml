@@ -60,6 +60,24 @@ jobs:
           useLegacyPattern: false
           enableTelemetry: false
 
+      - task: replacetokens@5
+        displayName: "Replace tokens in Terraform tfvars"
+        inputs:
+          rootDirectory: '$(SOURCE_DIR)/$(INFRA_DIR)'
+          targetFiles: |
+            **/tfvars.template => terraform.tfvars
+          encoding: 'auto'
+          tokenPrefix: "#{"
+          tokenSuffix: "}#"
+          writeBOM: true
+          actionOnMissing: 'fail'
+          keepToken: false
+          actionOnNoFiles: 'fail'
+          enableTransforms: false
+          enableRecursion: false
+          useLegacyPattern: false
+          enableTelemetry: false
+
       - task: AzureCLI@2
         displayName: "Get TF State Storage Access Key"
         inputs:
@@ -86,6 +104,8 @@ jobs:
           TF_CONTAINER_NAME: $(tmpBuildAgentTFContainerName)
           TF_KEY: "temp-build-agent.tfstate"
           TF_STORAGE_ACCESS_KEY: $(tfStateStorageAccessKey)
+          AZDO_ORG_SERVICE_URL: $(AZDO_ORG_SERVICE_URL)
+          AZDO_PERSONAL_ACCESS_TOKEN: $(AZDO_PERSONAL_ACCESS_TOKEN)
 
       - bash: |
           terraform plan
@@ -96,13 +116,7 @@ jobs:
           ARM_CLIENT_ID: $(ClientId)
           ARM_CLIENT_SECRET: $(ClientSecret)
           ARM_TENANT_ID: $(TenantId)
-          AZDO_ORG_SERVICE_URL: $(AZDO_ORG_SERVICE_URL)
-          AZDO_PERSONAL_ACCESS_TOKEN: $(AZDO_PERSONAL_ACCESS_TOKEN)
-          vm_computer_name: $(vm_computer_name)
           vm_admin_password: $(vm_admin_password)
-          vm_admin_username: $(vm_admin_username)
-          azure-do-agent-pool-name: $(azure-do-agent-pool-name)
-          azure-do-project-name: $(azure-do-project-name)
 
       - bash: |
           terraform apply -auto-approve
@@ -113,10 +127,4 @@ jobs:
           ARM_CLIENT_ID: $(ClientId)
           ARM_CLIENT_SECRET: $(ClientSecret)
           ARM_TENANT_ID: $(TenantId)
-          AZDO_ORG_SERVICE_URL: $(AZDO_ORG_SERVICE_URL)
-          AZDO_PERSONAL_ACCESS_TOKEN: $(AZDO_PERSONAL_ACCESS_TOKEN)
-          vm_computer_name: $(vm_computer_name)
           vm_admin_password: $(vm_admin_password)
-          vm_admin_username: $(vm_admin_username)
-          azure-do-agent-pool-name: $(azure-do-agent-pool-name)
-          azure-do-project-name: $(azure-do-project-name)

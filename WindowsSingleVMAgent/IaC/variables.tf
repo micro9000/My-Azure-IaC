@@ -11,10 +11,10 @@ variable "vm_admin_password" {
   sensitive = true
 }
 
-variable "azure-do-agent-pool-name" {
+variable "azure_do_agent_pool_name" {
   type = string
 }
 
-variable "azure-do-project-name" {
+variable "azure_do_project_name" {
   type = string
 }
