@@ -4,11 +4,11 @@
 #     include:
 #     - main
 
-resources:
-  pipelines:
-    - pipeline: shared-resources-ci # Name of the pipeline resource.
-      source: build-shared-resources # The name of the pipeline referenced by this pipeline resource.\
-      trigger: true
+# resources:
+#   pipelines:
+#     - pipeline: shared-resources-ci # Name of the pipeline resource.
+#       source: build-shared-resources # The name of the pipeline referenced by this pipeline resource.\
+#       trigger: true
 
 pool:
   vmImage: ubuntu-latest
