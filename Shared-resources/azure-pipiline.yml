@@ -1,8 +1,8 @@
 # This is build in https://dev.azure.com/RichCorner/DevOpsInfrastructures/
-# trigger:
-#   branches:
-#     include:
-#     - main
+trigger:
+  branches:
+    include:
+    - main
 
 pool:
   vmImage: 'ubuntu-latest'
