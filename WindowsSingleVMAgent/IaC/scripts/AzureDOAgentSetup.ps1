@@ -17,4 +17,4 @@ New-Item -ItemType Directory -Path $agentDir
 Set-Location -Path $agentDir
 Add-Type -AssemblyName System.IO.Compression.FileSystem ; [System.IO.Compression.ZipFile]::ExtractToDirectory("$destination", "$PWD")
 
-.\config.cmd --unattended --url "#{AZDO_ORG_SERVICE_URL}#" --auth pat --token "#{AZDO_PERSONAL_ACCESS_TOKEN}#" --pool "#{azure-do-agent-pool-name}#" --agent "windows-vm-2022" --runAsService --runAsAutoLogon --windowsLogonAccount "#{vm_admin_username}#" --windowsLogonPassword '#{vm_admin_password}#'
+.\config.cmd --unattended --url "#{AZDO_ORG_SERVICE_URL}#" --auth pat --token "#{AZDO_PERSONAL_ACCESS_TOKEN}#" --pool "#{azure_do_agent_pool_name}#" --agent "windows-vm-2022" --runAsService --runAsAutoLogon --windowsLogonAccount "#{vm_admin_username}#" --windowsLogonPassword '#{vm_admin_password}#'
