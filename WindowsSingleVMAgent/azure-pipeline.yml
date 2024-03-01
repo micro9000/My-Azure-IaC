@@ -39,6 +39,23 @@ jobs:
         displayName: Install Terraform Latest
         inputs:
           terraformVersion: Latest
+          
+      - task: replacetokens@5
+        displayName: "Replace tokens in PowerShell scripts"
+        inputs:
+          rootDirectory: '$(SOURCE_DIR)/$(INFRA_DIR)'
+          targetFiles: '**/*.ps1'
+          encoding: 'auto'
+          tokenPrefix: "#{"
+          tokenSuffix: "}#"
+          writeBOM: true
+          actionOnMissing: 'fail'
+          keepToken: false
+          actionOnNoFiles: 'fail'
+          enableTransforms: false
+          enableRecursion: false
+          useLegacyPattern: false
+          enableTelemetry: false
 
       - task: AzureCLI@2
         displayName: "Get TF State Storage Access Key"
