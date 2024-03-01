@@ -4,11 +4,14 @@
 #     include:
 #     - main
 
-# resources:
-#   pipelines:
-#     - pipeline: shared-resources-ci # Name of the pipeline resource.
-#       source: build-shared-resources # The name of the pipeline referenced by this pipeline resource.\
-#       trigger: true
+resources:
+  pipelines:
+    - pipeline: shared-resources-ci # Name of the pipeline resource.
+      source: build-shared-resources # The name of the pipeline referenced by this pipeline resource.\
+      trigger:
+        branches:
+          include: 
+          - main
 
 pool:
   vmImage: ubuntu-latest
@@ -83,8 +86,6 @@ jobs:
           TF_CONTAINER_NAME: $(tmpBuildAgentTFContainerName)
           TF_KEY: "temp-build-agent.tfstate"
           TF_STORAGE_ACCESS_KEY: $(tfStateStorageAccessKey)
-          vm_admin_password: $(vm_admin_password)
-          vm_admin_username: $(vm_admin_username)
 
       - bash: |
           terraform plan
@@ -97,7 +98,11 @@ jobs:
           ARM_TENANT_ID: $(TenantId)
           AZDO_ORG_SERVICE_URL: $(AZDO_ORG_SERVICE_URL)
           AZDO_PERSONAL_ACCESS_TOKEN: $(AZDO_PERSONAL_ACCESS_TOKEN)
-
+          vm_computer_name: $(vm_computer_name)
+          vm_admin_password: $(vm_admin_password)
+          vm_admin_username: $(vm_admin_username)
+          azure-do-agent-pool-name: $(azure-do-agent-pool-name)
+          azure-do-project-name: $(azure-do-project-name)
 
       - bash: |
           terraform apply -auto-approve
@@ -110,3 +115,8 @@ jobs:
           ARM_TENANT_ID: $(TenantId)
           AZDO_ORG_SERVICE_URL: $(AZDO_ORG_SERVICE_URL)
           AZDO_PERSONAL_ACCESS_TOKEN: $(AZDO_PERSONAL_ACCESS_TOKEN)
+          vm_computer_name: $(vm_computer_name)
+          vm_admin_password: $(vm_admin_password)
+          vm_admin_username: $(vm_admin_username)
+          azure-do-agent-pool-name: $(azure-do-agent-pool-name)
+          azure-do-project-name: $(azure-do-project-name)

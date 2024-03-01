@@ -1,11 +1,11 @@
 resource "azuredevops_agent_pool" "selfhosted-agent-pool" {
-  name           = "my-agent-pool"
+  name           = var.azure-do-agent-pool-name
   auto_provision = false
   auto_update    = false
 }
 
 data "azuredevops_project" "devops-project" {
-  name = "DevOpsInfrastructures"
+  name = var.azure-do-project-name
 }
 
 resource "azuredevops_agent_queue" "selfhosted-agent-to-project" {

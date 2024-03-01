@@ -10,4 +10,4 @@ New-Item -ItemType Directory -Path $agentDir
 Set-Location -Path $agentDir
 Add-Type -AssemblyName System.IO.Compression.FileSystem ; [System.IO.Compression.ZipFile]::ExtractToDirectory("$HOME\Downloads\vsts-agent-win-x64-3.234.0.zip", "$PWD")
 
-.\config.cmd --unattended --url "https://dev.azure.com/RichCorner" --auth pat --token "<your-pat>" --pool "<pool-name>" --agent "<agent-name>" --runAsService --runAsAutoLogon --windowsLogonAccount '<vm-computer-name>\<user-name>' --windowsLogonPassword '<user-password>'
+.\config.cmd --unattended --url "#{AZDO_ORG_SERVICE_URL}#" --auth pat --token "#{AZDO_PERSONAL_ACCESS_TOKEN}#" --pool "#{azure-do-agent-pool-name}#" --agent "windows-vm-2022" --runAsService --runAsAutoLogon --windowsLogonAccount "#{vm_admin_username}#" --windowsLogonPassword '#{vm_admin_password}#'

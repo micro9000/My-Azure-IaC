@@ -29,7 +29,7 @@ resource "azurerm_windows_virtual_machine" "azuredo-vm-agent" {
   resource_group_name = azurerm_resource_group.azuredo-vm-agent.name
   location            = azurerm_resource_group.azuredo-vm-agent.location
   size                = "Standard_F2"
-  computer_name       = "windows-agent"
+  computer_name       = var.vm_computer_name
   admin_username      = var.vm_admin_username
   admin_password      = var.vm_admin_password
   network_interface_ids = [
