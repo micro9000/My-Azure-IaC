@@ -19,6 +19,8 @@ variables:
 jobs:
   - job: CloneRunnerImage
     displayName: Clone GitHub Runner Image Repo
+    workspace:
+      clean: all
     steps:
       - script: git clone https://github.com/actions/runner-images.git
         displayName: 'Clone Repo'
