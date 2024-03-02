@@ -1,9 +1,9 @@
 # This is build in https://dev.azure.com/RichCorner/DevOpsInfrastructures/
-# We will only run this pipeline if we need updated image
+# Manually trigger
 trigger: none
 
 pool:
-  name: 'temp-agent-pool'
+  name: 'my-agent-pool'
 
 variables:
   - group: GenerateAgentImageCreds

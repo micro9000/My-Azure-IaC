@@ -9,7 +9,7 @@ The resources that we are going to create using the following commands are the i
 Generate the initial image using the following commands, replace the subscription id,
 This will generate an Image and an Azure Image resource contains that generated image
 
-`.\Initial-Image.ps1 -subscriptionId "<subscription-id>" -resourceGroupName "AzureDevOpsAgentImagesRG"`
+`.\Initial-Image.ps1 -subscriptionId "<subscription_id>" -resourceGroupName "<resource_group_name>" -imageType "Ubuntu2204" -azureLocation "East Asia"`
 
 ## Terraform Remote State Storage
 
