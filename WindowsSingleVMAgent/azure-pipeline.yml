@@ -30,6 +30,8 @@ variables:
 
 jobs:
   - job: ApplyAzureInfra
+    workspace:
+      clean: all
     steps:
       - task: Bash@3
         displayName: "Dump environment variables and list files"
