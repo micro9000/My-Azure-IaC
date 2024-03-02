@@ -3,7 +3,7 @@
 trigger: none
 
 pool:
-  name: 'my-agent-pool'
+  name: 'my-windows-agent-pool'
 
 variables:
   - group: GenerateAgentImageCreds
