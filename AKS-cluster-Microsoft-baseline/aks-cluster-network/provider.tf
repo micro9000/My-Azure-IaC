@@ -4,10 +4,6 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "3.92.0"
     }
-    azuredevops = {
-      source  = "microsoft/azuredevops"
-      version = "0.11.0"
-    }
     random = {
       source  = "hashicorp/random"
       version = "3.6.0"
@@ -28,9 +24,6 @@ provider "azurerm" {
       recover_soft_deleted_key_vaults = true
     }
   }
-}
-
-provider "azuredevops" {
 }
 
 provider "random" {
