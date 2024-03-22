@@ -7,7 +7,7 @@ data "azurerm_virtual_network" "hub_vnet" {
   resource_group_name = var.hub_resource_group_name
 }
 
-// This is the firewall that was deployed in 'hub-default' directory
+// This is the firewall that was deployed in the hub
 data "azurerm_firewall" "hub_firewall" {
   name                = var.hub_firewall_name
   resource_group_name = var.hub_resource_group_name

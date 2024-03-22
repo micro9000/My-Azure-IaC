@@ -30,7 +30,7 @@ resource "azurerm_subnet" "cluster_nodes_subnet" {
   virtual_network_name                          = azurerm_virtual_network.spoke_vnet.name
   address_prefixes                              = ["10.240.0.0/22"]
   private_endpoint_network_policies_enabled     = false
-  private_link_service_network_policies_enabled = true
+  private_link_service_network_policies_enabled = false
 }
 resource "azurerm_subnet_route_table_association" "cluster_nodes_subnet_route_table_assoc" {
   subnet_id      = azurerm_subnet.cluster_nodes_subnet.id
@@ -101,6 +101,11 @@ resource "azurerm_virtual_network_peering" "vnet_peer_spoke_to_hub" {
   resource_group_name       = azurerm_resource_group.main_resource_group.name
   virtual_network_name      = azurerm_virtual_network.spoke_vnet.name
   remote_virtual_network_id = data.azurerm_virtual_network.hub_vnet.id
+
+  allow_forwarded_traffic = false
+  allow_gateway_transit = false
+  allow_virtual_network_access = true
+  use_remote_gateways = false
 }
 
 // Connect regional hub back to this spoke, this could also be handled via the
@@ -114,6 +119,11 @@ resource "azurerm_virtual_network_peering" "vnet_peer_hub_to_spoke" {
   depends_on                = [azurerm_virtual_network_peering.vnet-peer-spoke-to-hub]
   virtual_network_name      = data.azurerm_virtual_network.hub_vnet.id
   remote_virtual_network_id = azurerm_virtual_network.spoke_vnet.name
+  
+  allow_forwarded_traffic = false
+  allow_gateway_transit = false
+  allow_virtual_network_access = true
+  use_remote_gateways = false
 }
 
 
@@ -144,7 +154,7 @@ resource "azurerm_monitor_diagnostic_setting" "public_ip_primary_cluster_diagnos
   }
 }
 
-
+// *** OUTPUTS ***
 output "cluster_vnet_resource_id" {
   value = azurerm_virtual_network.spoke_vnet.id
 }

@@ -10,8 +10,8 @@ resource "azurerm_monitor_diagnostic_setting" "nodepools_nsg_diagnostic_settings
   target_resource_id         = azurerm_network_security_group.nodepools_nsg.id
   log_analytics_workspace_id = data.azurerm_log_analytics_workspace.hub_workspace.id
 
-  metric {
-    category = "AllLogs"
+  enabled_log {
+    category_group = "AllLogs"
   }
 }
 
@@ -27,8 +27,8 @@ resource "azurerm_monitor_diagnostic_setting" "nodepools_nsg_diagnostic_settings
   target_resource_id         = azurerm_network_security_group.internal_loadbalancer_subnet_nsg.id
   log_analytics_workspace_id = data.azurerm_log_analytics_workspace.hub_workspace.id
 
-  metric {
-    category = "AllLogs"
+  enabled_log {
+    category_group = "AllLogs"
   }
 }
 
@@ -109,8 +109,8 @@ resource "azurerm_monitor_diagnostic_setting" "app_gateway_subnet_nsg_diagnostic
   target_resource_id         = azurerm_network_security_group.app_gateway_subnet_nsg.id
   log_analytics_workspace_id = data.azurerm_log_analytics_workspace.hub_workspace.id
 
-  metric {
-    category = "AllLogs"
+  enabled_log {
+    category_group = "AllLogs"
   }
 }
 
@@ -162,7 +162,7 @@ resource "azurerm_monitor_diagnostic_setting" "private_link_endpoint_subnet_nsg_
   target_resource_id         = azurerm_network_security_group.private_link_endpoint_subnet_nsg.id
   log_analytics_workspace_id = data.azurerm_log_analytics_workspace.hub_workspace.id
 
-  metric {
-    category = "AllLogs"
+  enabled_log {
+    category_group = "AllLogs"
   }
 }

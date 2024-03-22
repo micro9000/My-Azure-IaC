@@ -19,3 +19,6 @@ resource "random_string" "random" {
 
 
 data "azurerm_client_config" "current" {}
+
+
+# These TF configs are based on this: https://github.com/Raniel-Dev-Foundation/aks-baseline-03222024/blob/main/networking/hub-default.bicep
